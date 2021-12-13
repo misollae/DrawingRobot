@@ -8,7 +8,7 @@ public class BufferCircular {
 	// o semáforo acessoElemento garante exclusão mútua no acesso a um elemento
 	// o semáforo elementosOcupados indica se há posições com Strings válidas
 	private Semaphore elementosLivres, acessoElemento, elementosOcupados;
-	private Integer IDatual; 
+	private Integer IDatual;
 
 	public BufferCircular() {
 		bufferCircular= new Mensagem[DIMENSAOBUFFER];

@@ -14,13 +14,12 @@ public class EspacarFormasGeometricas extends Comportamento {
 	
 	public void setDistancia(int distancia) {
 		this.distancia = distancia;
-//		System.out.println("Mudei a distancia");
 	}
 	
 	public void desenha() {
-//		System.out.println("VOU ESPACAR");
 		((FrameEspacarFormas) frameCliente).write("Espaçamento de: " + distancia);
 		this.cliente.Reta(distancia);
+		this.cliente.Parar(false);
 	}
 
 }
