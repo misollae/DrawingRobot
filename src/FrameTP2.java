@@ -18,9 +18,6 @@ public class FrameTP2 {
 
 	private Semaphore semaforo;
 
-	private Comportamento ultiComportamento;
-	private Comportamento proxComportamento;
-
 	private JFrame frmTp;
 
 	/**
@@ -59,9 +56,6 @@ public class FrameTP2 {
 		desenhaPol.start();
 		desenhaCir.start();
 		espaca.start();
-
-		this.ultiComportamento = null;
-		this.proxComportamento = null;
 	}
 
 	public void setUpServidor() throws InvocationTargetException, InterruptedException {
@@ -86,7 +80,6 @@ public class FrameTP2 {
 		frmTp.setResizable(false);
 		frmTp.setTitle("TP2");
 		frmTp.getContentPane().setLayout(null);
-		this.ultiComportamento = null;
 
 		JButton quadradoButton = new JButton("Desenhar Quadrado");
 		quadradoButton.addActionListener(new ActionListener() {

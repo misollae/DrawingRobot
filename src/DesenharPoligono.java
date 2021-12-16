@@ -52,7 +52,6 @@ public class DesenharPoligono extends Comportamento {
 	
 	public void desenha() {
 		espacador.avanca();
-		espacador.setUltimo(this);
 		((FrameDesenharPoligono) frameCliente).write("Execução de um Polígono com " + numLados + " lados de " + lado);
 
 		int anguloDesenho = (180 * (numLados-2)) / numLados;
@@ -64,6 +63,7 @@ public class DesenharPoligono extends Comportamento {
 		}
 		
 		((FrameDesenharPoligono) frameCliente).write("Fim do um Polígono com " + numLados + " lados de " + lado);
+		espacador.setUltimo(this);
 		this.ultLado     = lado;
 		this.ultNumLados = numLados;
 	}

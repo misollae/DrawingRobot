@@ -21,7 +21,6 @@ public class DesenharQuadrado extends Comportamento {
 	
 	public void desenha() {
 		espacador.avanca();
-		espacador.setUltimo(this);
 		((FrameDesenharQuadrado) frameCliente).write("Execução de um Quadrado de Lado: " + lado);
 		cliente.Reta(lado);
 		cliente.CurvarDireita(90, 0);
@@ -35,5 +34,6 @@ public class DesenharQuadrado extends Comportamento {
 		cliente.Reta(lado);
 		cliente.Parar(false);
 		((FrameDesenharQuadrado) frameCliente).write("Fim do Quadrado de Lado: " + lado);
+		espacador.setUltimo(this);
 	}
 }
