@@ -3,14 +3,15 @@ public class DesenharPoligono extends Comportamento {
 	private int numLados;
 	private int ultLado;
 	private int ultNumLados;
-	
+	private EspacarFormasGeometricas espacador;
 
-	public DesenharPoligono() {
+	public DesenharPoligono(EspacarFormasGeometricas espacador) {
 		super();
 		this.frameCliente = new FrameDesenharPoligono();
 		((FrameDesenharPoligono) this.frameCliente).setComportamento(this);
 		lado     = 10;
 		numLados = 5;
+		this.espacador = espacador;
 	}
 	
 	public void openFrame() {
@@ -50,6 +51,8 @@ public class DesenharPoligono extends Comportamento {
 	}
 	
 	public void desenha() {
+		espacador.avanca();
+		espacador.setUltimo(this);
 		((FrameDesenharPoligono) frameCliente).write("Execução de um Polígono com " + numLados + " lados de " + lado);
 
 		int anguloDesenho = (180 * (numLados-2)) / numLados;
@@ -64,9 +67,4 @@ public class DesenharPoligono extends Comportamento {
 		this.ultLado     = lado;
 		this.ultNumLados = numLados;
 	}
-
-	public static void main(String[] args) {
-		new DesenharPoligono();
-	}
-
 }
