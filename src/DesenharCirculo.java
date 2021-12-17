@@ -29,7 +29,7 @@ public class DesenharCirculo extends Comportamento {
 	}
 	
 	public void desenha() {
-		espacador.avanca();
+//		espacador.avanca();
 		cliente.CurvarDireita(360, raio);
 		((FrameDesenharCirculo) frameCliente).write("Execução de um Círculo de Raio " + raio);
 		cliente.Parar(false);

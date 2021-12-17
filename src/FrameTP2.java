@@ -15,6 +15,7 @@ public class FrameTP2 {
 	private DesenharPoligono desenhaPol;
 	private EspacarFormasGeometricas espaca;
 	private ServidorRobot servidor;
+	private GravarFormas gravador;
 
 	private Semaphore semaforo;
 
@@ -38,6 +39,7 @@ public class FrameTP2 {
 			}
 		});
 		semaforo = new Semaphore(1);
+		gravador = new GravarFormas();
 		this.buffer = new BufferCircular();
 	}
 
@@ -60,6 +62,7 @@ public class FrameTP2 {
 
 	public void setUpServidor() throws InvocationTargetException, InterruptedException {
 		this.servidor = new ServidorRobot();
+		
 		servidor.setBuffer(buffer);
 		servidor.start();
 	}
@@ -84,48 +87,36 @@ public class FrameTP2 {
 		JButton quadradoButton = new JButton("Desenhar Quadrado");
 		quadradoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					espaca.setProximo(desenhaQua);
-					semaforo.acquire();
-					desenhaQua.avanca();
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
+				espaca.setProximo(desenhaQua);
+				espaca.avanca();
+				desenhaQua.avanca();
 
 			}
 		});
-		quadradoButton.setBounds(25, 117, 186, 34);
+		quadradoButton.setBounds(25, 129, 186, 34);
 		frmTp.getContentPane().add(quadradoButton);
 
 		JButton circuloButton = new JButton("Desenhar Círculo");
 		circuloButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					espaca.setProximo(desenhaCir);
-					semaforo.acquire();
-					desenhaCir.avanca();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				espaca.setProximo(desenhaCir);
+				espaca.avanca();
+				desenhaCir.avanca();
 			}
 		});
-		circuloButton.setBounds(25, 162, 186, 34);
+		circuloButton.setBounds(25, 174, 186, 34);
 		frmTp.getContentPane().add(circuloButton);
 
 		JButton poligonoButton = new JButton("Desenhar Pol\u00EDgono");
 		poligonoButton.setEnabled(false);
 		poligonoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					semaforo.acquire();
-					espaca.setProximo(desenhaPol);
-					desenhaPol.avanca();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				espaca.setProximo(desenhaPol);
+				espaca.avanca();
+				desenhaPol.avanca();
 			}
 		});
-		poligonoButton.setBounds(25, 208, 186, 34);
+		poligonoButton.setBounds(25, 220, 186, 34);
 		frmTp.getContentPane().add(poligonoButton);
 
 		JButton abrirFrames = new JButton("Cliente");
@@ -150,7 +141,7 @@ public class FrameTP2 {
 		});
 		setUp.setBounds(26, 26, 91, 27);
 		frmTp.getContentPane().add(setUp);
-		frmTp.setBounds(100, 100, 256, 311);
+		frmTp.setBounds(100, 100, 259, 358);
 		frmTp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		abrirFrames.setEnabled(false);
@@ -171,13 +162,25 @@ public class FrameTP2 {
 		abrirFrames_1.setBounds(120, 77, 91, 27);
 		frmTp.getContentPane().add(abrirFrames_1);
 
+		JButton abrirFrames_2 = new JButton("Grava\u00E7\u00E3o");
+		abrirFrames_2.setEnabled(false);
+		abrirFrames_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gravador.abrirFrame();
+			}
+		});
+		abrirFrames_2.setBounds(69, 264, 107, 27);
+		frmTp.getContentPane().add(abrirFrames_2);
+		
 		JButton setUp_1 = new JButton("Servidor");
 		setUp_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					setUpServidor();
 					abrirFrames_1.setEnabled(true);
+					abrirFrames_2.setEnabled(true);
 					setUp_1.setEnabled(false);
+					gravador.start();
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {
@@ -191,11 +194,15 @@ public class FrameTP2 {
 		JLabel lblOpenFrame = new JLabel("Abrir Frames:");
 		lblOpenFrame.setBounds(87, 60, 77, 13);
 		frmTp.getContentPane().add(lblOpenFrame);
+		
+		
+		JLabel lblExecutarFormas = new JLabel("Executar Formas:");
+		lblExecutarFormas.setBounds(75, 112, 91, 13);
+		frmTp.getContentPane().add(lblExecutarFormas);
 
 	}
 
 	public static void main(String[] args) throws InvocationTargetException, InterruptedException {
 		FrameTP2 tp2 = new FrameTP2();
-//		tp2.run();
 	}
 }

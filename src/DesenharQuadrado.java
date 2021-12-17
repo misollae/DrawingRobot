@@ -20,7 +20,7 @@ public class DesenharQuadrado extends Comportamento {
 	
 	
 	public void desenha() {
-		espacador.avanca();
+//		espacador.avanca();
 		((FrameDesenharQuadrado) frameCliente).write("Execução de um Quadrado de Lado: " + lado);
 		cliente.Reta(lado);
 		cliente.CurvarDireita(90, 0);

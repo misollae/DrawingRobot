@@ -17,7 +17,6 @@ public abstract class Comportamento extends Thread {
 		this.cliente  = cliente;
 		this.estado   = Estado.Espera;
 		this.semaforo = semafore;
-//		this.espacar  = espacar;
 	}
 
 	public abstract void openFrame();
@@ -25,6 +24,12 @@ public abstract class Comportamento extends Thread {
 	public abstract void desenha();
 	
 	public void avanca() {
+		try {
+			semaforo.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		estado = Estado.Desenha;
 	}
 	
