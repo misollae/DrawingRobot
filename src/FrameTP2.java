@@ -117,8 +117,8 @@ public class FrameTP2 {
 		poligonoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					semaforo.acquire();
 					espaca.setProximo(desenhaPol);
+					semaforo.acquire();
 					desenhaPol.avanca();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -196,6 +196,5 @@ public class FrameTP2 {
 
 	public static void main(String[] args) throws InvocationTargetException, InterruptedException {
 		FrameTP2 tp2 = new FrameTP2();
-//		tp2.run();
 	}
 }

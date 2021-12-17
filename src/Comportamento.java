@@ -17,7 +17,6 @@ public abstract class Comportamento extends Thread {
 		this.cliente  = cliente;
 		this.estado   = Estado.Espera;
 		this.semaforo = semafore;
-//		this.espacar  = espacar;
 	}
 
 	public abstract void openFrame();
