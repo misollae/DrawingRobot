@@ -1,12 +1,17 @@
 public class RobotDesenhador implements IEV3{
 	private RobotLegoEV3 r;
 	private FrameRobotDesenhador frameRobot;
+	private GravarFormas gravador;
 	
 	public RobotDesenhador(RobotLegoEV3 r) {
 		if(r != null) {
 			this.r = r;
 		}
 		this.frameRobot = new FrameRobotDesenhador();
+	}
+	
+	public void setGravador(GravarFormas gravador) {
+		this.gravador = gravador;
 	}
 	
 	public void openFrame() {
@@ -44,15 +49,23 @@ public class RobotDesenhador implements IEV3{
 		else {
 			System.out.printf("Reta: <%d>\n", distancia);
 		}
+		
+		if (gravador.getEstado() == GravarFormas.Estado.Gravar) {
+			gravador.receberMensagem("Reta: <" + distancia + ">");
+		}
 	}
 	
-	public void CurvarEsquerda(int angulo, int raio) {	
+	public void CurvarEsquerda(int angulo, int raio) {
 		enviarMensagemFrame("CurvarEsquerda: <" + angulo + ">, <" + raio +">");
 		if (r != null) {
 			r.CurvarEsquerda(raio, angulo);
 		}
 		else {
 			System.out.printf("CurvarEsquerda: <%d>, <%d>\n", angulo, raio);
+		}
+		
+		if (gravador.getEstado() == GravarFormas.Estado.Gravar) {
+			gravador.receberMensagem("CurvarEsquerda: <" + angulo + ">, <" + raio +">");
 		}
 	}
 	
@@ -64,6 +77,9 @@ public class RobotDesenhador implements IEV3{
 		else {
 			System.out.printf("CurvarDireita: <%d>, <%d>\n", angulo, raio);
 		}
+		if (gravador.getEstado() == GravarFormas.Estado.Gravar) {
+			gravador.receberMensagem("CurvarDireita: <" + angulo + ">, <" + raio +">");
+		}
 	}
 	
 	public void Parar(boolean agora) {
@@ -73,6 +89,9 @@ public class RobotDesenhador implements IEV3{
 		}
 		else {
 			System.out.print("Parar robot\n");
+		}
+		if (gravador.getEstado() == GravarFormas.Estado.Gravar) {
+			gravador.receberMensagem("Parar: <" + agora + ">");
 		}
 	}
 	

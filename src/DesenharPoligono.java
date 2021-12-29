@@ -51,17 +51,17 @@ public class DesenharPoligono extends Comportamento {
 	}
 	
 	public void desenha() {
-		espacador.avanca();
 		((FrameDesenharPoligono) frameCliente).write("Execução de um Polígono com " + numLados + " lados de " + lado);
-
-		int anguloDesenho = (180 * (numLados-2)) / numLados;
+		cliente.ComecaAcaba(true);
 		
+		int anguloDesenho = (180 * (numLados-2)) / numLados;
 		for (int i = 0 ; i < numLados ; i++) {
 			cliente.Reta(lado);
 			if (i != numLados-1) cliente.CurvarDireita(anguloDesenho, 0);
 			cliente.Parar(false);
 		}
 		
+		cliente.ComecaAcaba(false);
 		((FrameDesenharPoligono) frameCliente).write("Fim do um Polígono com " + numLados + " lados de " + lado);
 		espacador.setUltimo(this);
 		this.ultLado     = lado;

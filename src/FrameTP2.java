@@ -39,7 +39,6 @@ public class FrameTP2 {
 			}
 		});
 		semaforo = new Semaphore(1);
-		gravador = new GravarFormas();
 		this.buffer = new BufferCircular();
 	}
 
@@ -61,8 +60,9 @@ public class FrameTP2 {
 	}
 
 	public void setUpServidor() throws InvocationTargetException, InterruptedException {
-		this.servidor = new ServidorRobot();
-		
+		gravador = new GravarFormas();
+		this.servidor = new ServidorRobot(gravador);
+		servidor.getRobot().setGravador(gravador);
 		servidor.setBuffer(buffer);
 		servidor.start();
 	}

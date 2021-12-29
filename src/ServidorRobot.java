@@ -11,12 +11,14 @@ public class ServidorRobot extends Thread{
 	private RobotDesenhador robot;
 	private RobotLegoEV3 ev3 = new RobotLegoEV3(); // Robot verdadeiro
 	private ArrayList<Mensagem> mensagensRecebidas = new ArrayList<Mensagem>();
+
 	private boolean aExecutar;
 	private Clock clock = Clock.systemDefaultZone();
 	private long tempoDeEspera;
 	private long inicioDaEspera;
+	private GravarFormas gravador;
 
-	public ServidorRobot() throws InvocationTargetException, InterruptedException {
+	public ServidorRobot(GravarFormas gravador) throws InvocationTargetException, InterruptedException {
 		if (!SwingUtilities.isEventDispatchThread()) {
 			SwingUtilities.invokeAndWait(new Runnable() {
 			public void run() {	ServidorRobot.this.frameServidor = new FrameServidor();	}
@@ -25,6 +27,7 @@ public class ServidorRobot extends Thread{
 			this.frameServidor = new FrameServidor();
 		}
 		
+		this.gravador = gravador;
 		this.robot = new RobotDesenhador(null); // Null para simulaçao, EV3 para verdadeiro
 		this.aExecutar = false;
 		this.frameServidor.setRobot(robot);
@@ -41,6 +44,10 @@ public class ServidorRobot extends Thread{
 		robot.openFrame();
 	}
 
+	public RobotDesenhador getRobot() {
+		return robot;
+	}
+	
 	public void run() {
 		for (;;) {
 			try {
@@ -49,8 +56,16 @@ public class ServidorRobot extends Thread{
 					Mensagem msgRecebida = buffer.get();
 					// Vai adicionando as mensagens recebidas a um array, se o canal estiver aberto
 					if (msgRecebida != null) {
-						frameServidor.write("Recebi: " + msgRecebida);
-						mensagensRecebidas.add(msgRecebida);
+						if (msgRecebida instanceof MensagemComecaAcaba) {
+							MensagemComecaAcaba msgComAca = (MensagemComecaAcaba) msgRecebida;
+							if (msgComAca.getComeca() == false && gravador.hasGravacao()) mensagensRecebidas.addAll(gravador.transferirGravacao());
+						}
+						else {
+							frameServidor.write("Recebi: " + msgRecebida);
+							mensagensRecebidas.add(msgRecebida);
+						}
+					} else {
+						if (mensagensRecebidas.isEmpty() && gravador.hasGravacao()) mensagensRecebidas.addAll(gravador.transferirGravacao());
 					}
 				}
 				// Sempre que termina a execução de outra instrução, enquanto ainda estiver ligado e tiver mais no Array...
@@ -68,7 +83,7 @@ public class ServidorRobot extends Thread{
 							tempoDeEspera  = (long) (Math.ceil(msgReta.getDistancia() / 30.0f) * 1000.0f);
 							// E marcamos o inicio da espera
 							inicioDaEspera = clock.millis();
-							break;
+							break;	
 		
 						case Mensagem.typeCurvaDireita:
 							MensagemCurvarDireita msgDireita = (MensagemCurvarDireita) proxMensagem;

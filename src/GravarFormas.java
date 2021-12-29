@@ -1,15 +1,25 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class GravarFormas extends Thread {
+	private ArrayList<Mensagem> mensagensGravacao  = new ArrayList<Mensagem>();
+
 	private FrameGravarFormas frameGravar;
 	private String[] strings;
-	private OutputStream output;
+	private FileOutputStream output;
+	private FileInputStream  input;
+
 	private String name;
 	private String line;
-	private RobotDesenhador robot;
+	
 	private BufferedReader br;
 
 	public enum Estado {
@@ -21,6 +31,7 @@ public class GravarFormas extends Thread {
 	public GravarFormas() {
 		this.frameGravar = new FrameGravarFormas(this);
 		estado = Estado.Espera;
+		this.br = null;
 	}
 
 	public void abrirFrame() {
@@ -30,24 +41,99 @@ public class GravarFormas extends Thread {
 	public Estado getEstado() {
 		return estado;
 	}
+	
+	public boolean hasGravacao() {
+		return !(mensagensGravacao.isEmpty());
+	}
+	
+	public ArrayList<Mensagem> transferirGravacao() {
+		@SuppressWarnings("unchecked")
+		ArrayList<Mensagem> copia = (ArrayList<Mensagem>) mensagensGravacao.clone();
+		mensagensGravacao.clear();
+		return copia;
+	}
+	
+	public void receberMensagem(String msg) {
+		String comando = msg.split(":")[0];
+		String params  = msg.split(":")[1];
+		if (comando.equals("Reta") || comando.equals("Parar")) {
+			try {
+				output.write(comando.getBytes());
+				output.write((", ").getBytes());
+				output.write((params.substring(params.indexOf("<") + 1, params.indexOf(">"))).getBytes());
+				output.write(("\n").getBytes());
 
+			} catch (IOException e) {
+//				e.printStackTrace();
+			}
+		}
+		if (comando.equals("CurvarEsquerda") || comando.equals("CurvarDireita")) {
+			try {
+				output.write(comando.getBytes());
+				output.write((", ").getBytes());
+				output.write((params.split(", ")[0].substring((params.split(", ")[0]).indexOf("<") + 1, (params.split(", ")[0]).indexOf(">"))).getBytes());
+				output.write((", ").getBytes());
+				output.write((params.split(", ")[1].substring((params.split(", ")[1]).indexOf("<") + 1, (params.split(", ")[1]).indexOf(">"))).getBytes());
+				output.write(("\n").getBytes());
+			} catch (IOException e) {
+//				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void repetirMensagem() {
+		File chosenFile = frameGravar.getChosenFile();
+		try {
+			this.br = new BufferedReader(new InputStreamReader(new FileInputStream(chosenFile), StandardCharsets.UTF_8));	
+			try {
+				String line;
+				ArrayList<Mensagem> gravacaoLida = new ArrayList<Mensagem>();
+			    while ((line = br.readLine()) != null) {
+			    	String[] comando = line.split(", ");
+			    	if (comando[0].equals("Reta")) {
+			    		System.out.println(new MensagemReta(Integer.valueOf(comando[1])));
+			    		gravacaoLida.add(new MensagemReta(Integer.valueOf(comando[1])));
+			    	}
+			    	if (comando[0].equals("Parar")) {
+			    		System.out.println(new MensagemParar(Boolean.valueOf(comando[1])));
+			    		gravacaoLida.add(new MensagemParar(Boolean.valueOf(comando[1])));
+			    	}
+			    	if (comando[0].equals("CurvarDireita")) {
+			    		System.out.println(new MensagemCurvarDireita(Integer.valueOf(comando[1]), Integer.valueOf(comando[2])));
+			    		gravacaoLida.add(new MensagemCurvarDireita(Integer.valueOf(comando[1]), Integer.valueOf(comando[2])));
+			    	}
+			    	if (comando[0].equals("CurvarEsquerda")) {
+			    		System.out.println(new MensagemCurvarEsquerda(Integer.valueOf(comando[1]), Integer.valueOf(comando[2])));
+			    		gravacaoLida.add(new MensagemCurvarEsquerda(Integer.valueOf(comando[1]), Integer.valueOf(comando[2])));
+			    	}
+			    }
+			    this.mensagensGravacao.addAll(gravacaoLida);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void iniciarGravacao() {
 		estado = Estado.Gravar;
-	}
-
-	public void pararGravacao() {
-		estado = Estado.Espera;
 		try {
-
 			File novoFicheiro = new File(frameGravar.getFileName());
+			output  = new FileOutputStream(novoFicheiro, true);
 			if (novoFicheiro.createNewFile()) {
-				System.out.println("File created.");
+//				System.out.println("File created.");
 			} else {
-				System.out.println("File already exists.");
+//				System.out.println("File already exists.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	public void pararGravacao() {
+		estado = Estado.Espera;
 	}
 
 	public void run() {

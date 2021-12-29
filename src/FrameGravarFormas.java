@@ -35,12 +35,16 @@ public class FrameGravarFormas extends JFrame{
 			this.nomeFicheiro = this.textField.getText();
 			System.out.printf("Novo nome: " + this.nomeFicheiro);			
 		} catch (Exception e) {
-			System.out.print("Distância Inválida \n");
+			System.out.print("Nome Inválido \n");
 		}	
 	}
 	
 	public String getFileName() {
 		return nomeFicheiro;
+	}
+	
+	public File getChosenFile() {
+		return chosenFile;
 	}
 	
 	/**
@@ -71,7 +75,6 @@ public class FrameGravarFormas extends JFrame{
 		tglbtnNewToggleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (gravarFormas.getEstado().equals(GravarFormas.Estado.Espera)) {
-					System.out.println("entrei");
 					gravarFormas.iniciarGravacao();
 					tglbtnNewToggleButton.setText("Parar");
 					return;
@@ -104,6 +107,11 @@ public class FrameGravarFormas extends JFrame{
         getContentPane().add(file);
         
         JButton btnRun = new JButton("Run");
+        btnRun.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		gravarFormas.repetirMensagem();;
+        	}
+        });
         btnRun.setBounds(180, 115, 66, 21);
         getContentPane().add(btnRun);
         
@@ -119,4 +127,5 @@ public class FrameGravarFormas extends JFrame{
 	public static void main(String[] args) {
 		new FrameGravarFormas(null);
 	}
+
 }

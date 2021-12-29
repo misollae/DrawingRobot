@@ -6,6 +6,10 @@ public class ClienteDoRobot implements IEV3{
 		this.buffer = buffer;
 	}
 	
+	public void ComecaAcaba(boolean comeca) {
+		this.buffer.put(new MensagemComecaAcaba(comeca));
+	}
+	
 	public void Reta(int distancia) {
 		this.buffer.put(new MensagemReta(distancia));
 	}
