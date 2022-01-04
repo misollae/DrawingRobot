@@ -16,9 +16,7 @@ public class FrameTP2 {
 	private EspacarFormasGeometricas espaca;
 	private ServidorRobot servidor;
 	private GravarFormas gravador;
-
 	private Semaphore semaforo;
-
 	private JFrame frmTp;
 
 	/**
@@ -62,7 +60,6 @@ public class FrameTP2 {
 	public void setUpServidor() throws InvocationTargetException, InterruptedException {
 		gravador = new GravarFormas();
 		this.servidor = new ServidorRobot(gravador);
-		servidor.getRobot().setGravador(gravador);
 		servidor.setBuffer(buffer);
 		servidor.start();
 	}
@@ -197,7 +194,7 @@ public class FrameTP2 {
 		
 		
 		JLabel lblExecutarFormas = new JLabel("Executar Formas:");
-		lblExecutarFormas.setBounds(75, 112, 91, 13);
+		lblExecutarFormas.setBounds(75, 112, 113, 13);
 		frmTp.getContentPane().add(lblExecutarFormas);
 
 	}

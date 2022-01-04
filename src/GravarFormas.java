@@ -16,15 +16,11 @@ public class GravarFormas extends Thread {
 	private String[] strings;
 	private FileOutputStream output;
 	private FileInputStream  input;
-
 	private String name;
-	private String line;
-	
+	private String line;	
 	private BufferedReader br;
 
-	public enum Estado {
-		Espera, Gravar, Parar
-	}
+	public enum Estado { Espera, Gravar, Parar }
 
 	private Estado estado;
 
@@ -54,10 +50,15 @@ public class GravarFormas extends Thread {
 	}
 	
 	public void receberMensagem(String msg) {
-		String comando = msg.split(":")[0];
-		String params  = msg.split(":")[1];
+		String id       = msg.split("; ")[0];	
+		String mensagem = msg.split("; ")[1];
+
+		String comando = mensagem.split(":")[0];
+		String params  = mensagem.split(":")[1];
 		if (comando.equals("Reta") || comando.equals("Parar")) {
 			try {
+				output.write(id.getBytes());
+				output.write((", ").getBytes());
 				output.write(comando.getBytes());
 				output.write((", ").getBytes());
 				output.write((params.substring(params.indexOf("<") + 1, params.indexOf(">"))).getBytes());
@@ -69,6 +70,8 @@ public class GravarFormas extends Thread {
 		}
 		if (comando.equals("CurvarEsquerda") || comando.equals("CurvarDireita")) {
 			try {
+				output.write(id.getBytes());
+				output.write((", ").getBytes());
 				output.write(comando.getBytes());
 				output.write((", ").getBytes());
 				output.write((params.split(", ")[0].substring((params.split(", ")[0]).indexOf("<") + 1, (params.split(", ")[0]).indexOf(">"))).getBytes());
@@ -90,21 +93,25 @@ public class GravarFormas extends Thread {
 				ArrayList<Mensagem> gravacaoLida = new ArrayList<Mensagem>();
 			    while ((line = br.readLine()) != null) {
 			    	String[] comando = line.split(", ");
-			    	if (comando[0].equals("Reta")) {
-			    		System.out.println(new MensagemReta(Integer.valueOf(comando[1])));
-			    		gravacaoLida.add(new MensagemReta(Integer.valueOf(comando[1])));
+			    	if (comando[1].equals("Reta")) {
+			    		MensagemReta msgReta = new MensagemReta(Integer.valueOf(comando[2]));
+			    		msgReta.setID(Integer.valueOf(comando[0]));
+			    		gravacaoLida.add(msgReta);
 			    	}
-			    	if (comando[0].equals("Parar")) {
-			    		System.out.println(new MensagemParar(Boolean.valueOf(comando[1])));
-			    		gravacaoLida.add(new MensagemParar(Boolean.valueOf(comando[1])));
+			    	if (comando[1].equals("Parar")) {
+			    		MensagemParar msgParar = new MensagemParar(Boolean.valueOf(comando[2]));
+			    		msgParar.setID(Integer.valueOf(comando[0]));
+			    		gravacaoLida.add(msgParar);
 			    	}
-			    	if (comando[0].equals("CurvarDireita")) {
-			    		System.out.println(new MensagemCurvarDireita(Integer.valueOf(comando[1]), Integer.valueOf(comando[2])));
-			    		gravacaoLida.add(new MensagemCurvarDireita(Integer.valueOf(comando[1]), Integer.valueOf(comando[2])));
+			    	if (comando[1].equals("CurvarDireita")) {
+			    		MensagemCurvarDireita msgDireita = new MensagemCurvarDireita(Integer.valueOf(comando[2]), Integer.valueOf(comando[3]));
+			    		msgDireita.setID(Integer.valueOf(comando[0]));
+			    		gravacaoLida.add(msgDireita);
 			    	}
-			    	if (comando[0].equals("CurvarEsquerda")) {
-			    		System.out.println(new MensagemCurvarEsquerda(Integer.valueOf(comando[1]), Integer.valueOf(comando[2])));
-			    		gravacaoLida.add(new MensagemCurvarEsquerda(Integer.valueOf(comando[1]), Integer.valueOf(comando[2])));
+			    	if (comando[1].equals("CurvarEsquerda")) {
+			    		MensagemCurvarEsquerda msgEsquerda = new MensagemCurvarEsquerda(Integer.valueOf(comando[2]), Integer.valueOf(comando[3]));
+			    		msgEsquerda.setID(Integer.valueOf(comando[0]));
+			    		gravacaoLida.add(msgEsquerda);
 			    	}
 			    }
 			    this.mensagensGravacao.addAll(gravacaoLida);

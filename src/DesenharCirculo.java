@@ -30,10 +30,10 @@ public class DesenharCirculo extends Comportamento {
 	
 	public void desenha() {
 		((FrameDesenharCirculo) frameCliente).write("Execução de um Círculo de Raio " + raio);
-		cliente.ComecaAcaba(true);
+		cliente.Comeca();
 		cliente.CurvarDireita(360, raio);
 		cliente.Parar(false);
-		cliente.ComecaAcaba(false);
+		cliente.Acaba();
 		((FrameDesenharCirculo) frameCliente).write("Fim do Círculo de Raio " + raio);
 		espacador.setUltimo(this);
 		this.ultimoRaio = raio;

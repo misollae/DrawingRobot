@@ -31,7 +31,8 @@ public class EspacarFormasGeometricas extends Comportamento {
 		// NÃO ANDA
 		if ((ultimo instanceof DesenharQuadrado && proximo instanceof DesenharQuadrado) 
 		 || (ultimo instanceof DesenharQuadrado && proximo instanceof DesenharPoligono && ((DesenharPoligono) proximo).getNumLados() == 3)
-		 || (ultimo instanceof DesenharPoligono && ((DesenharPoligono) ultimo).getUltNumLados() == 3 && proximo instanceof DesenharQuadrado)) {
+		 || (ultimo instanceof DesenharPoligono && ((DesenharPoligono) ultimo).getUltNumLados() == 3 && proximo instanceof DesenharQuadrado) 
+		 || (ultimo instanceof DesenharPoligono && ((DesenharPoligono) ultimo).getUltNumLados() == 3 && proximo instanceof DesenharPoligono && ((DesenharPoligono) proximo).getNumLados() == 3)){
 			return 0;
 		}
 
@@ -65,15 +66,22 @@ public class EspacarFormasGeometricas extends Comportamento {
 			return ((int) (Math.ceil(((DesenharCirculo) proximo).getRaio() + ((DesenharPoligono) ultimo).getUltCircleRadius() - (((DesenharPoligono) ultimo).getUltLado() / 2))));
 		}
 
-		// Anda o raio da circunferência sobreescrita no poligono anterior - metade do
+		// Anda o raio da circunferência sobreescrita no proximo poligono - metade do
 		// seu lado
-		if (ultimo instanceof DesenharQuadrado && proximo instanceof DesenharPoligono && ((DesenharPoligono) proximo).getNumLados() > 3) {
+		if (ultimo instanceof DesenharQuadrado && proximo instanceof DesenharPoligono && ((DesenharPoligono) proximo).getNumLados() > 3
+		 || ultimo instanceof DesenharPoligono && ((DesenharPoligono) ultimo).getUltNumLados() == 3 && proximo instanceof DesenharPoligono && ((DesenharPoligono) proximo).getNumLados() > 3) {
 			return ((int) (Math.ceil(((DesenharPoligono) proximo).getCircleRadius() - (((DesenharPoligono) proximo).getLado() / 2))));
+		}
+		
+		// Anda a soma dos raios da circunferências sobreescritas nos poligonos - metade do seu lado
+		if (ultimo instanceof DesenharPoligono && ((DesenharPoligono) ultimo).getUltNumLados() > 3 && proximo instanceof DesenharPoligono && ((DesenharPoligono) proximo).getNumLados() > 3) {
+			return ((int) (Math.ceil(((DesenharPoligono) proximo).getCircleRadius() - (((DesenharPoligono) proximo).getLado() / 2)))) + ((int) (Math.ceil(((DesenharPoligono) ultimo).getCircleRadius() - (((DesenharPoligono) ultimo).getLado() / 2))));
 		}
 
 		// Anda o raio da circunferência sobreescrita no poligono anterior - metade do
 		// seu lado
-		if (ultimo instanceof DesenharPoligono && ((DesenharPoligono) ultimo).getUltNumLados() > 3 && proximo instanceof DesenharQuadrado) {
+		if ((ultimo instanceof DesenharPoligono && ((DesenharPoligono) ultimo).getUltNumLados() > 3 && proximo instanceof DesenharQuadrado)
+		 || (ultimo instanceof DesenharPoligono && ((DesenharPoligono) ultimo).getUltNumLados() > 3 && proximo instanceof DesenharPoligono && ((DesenharPoligono) proximo).getNumLados() == 3)) {
 			return ((int) (Math.ceil(((DesenharPoligono) ultimo).getUltCircleRadius() - (((DesenharPoligono) ultimo).getUltLado() / 2))));
 		}
 		

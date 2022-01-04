@@ -56,11 +56,11 @@ public class ServidorRobot extends Thread{
 					Mensagem msgRecebida = buffer.get();
 					// Vai adicionando as mensagens recebidas a um array, se o canal estiver aberto
 					if (msgRecebida != null) {
-						if (msgRecebida instanceof MensagemComecaAcaba) {
-							MensagemComecaAcaba msgComAca = (MensagemComecaAcaba) msgRecebida;
-							if (msgComAca.getComeca() == false && gravador.hasGravacao()) mensagensRecebidas.addAll(gravador.transferirGravacao());
+						if (msgRecebida instanceof MensagemAcaba) {
+							MensagemAcaba msgComAca = (MensagemAcaba) msgRecebida;
+							if (gravador.hasGravacao()) mensagensRecebidas.addAll(gravador.transferirGravacao());
 						}
-						else {
+						else if (!(msgRecebida instanceof MensagemComeca)){
 							frameServidor.write("Recebi: " + msgRecebida);
 							mensagensRecebidas.add(msgRecebida);
 						}
@@ -72,12 +72,15 @@ public class ServidorRobot extends Thread{
 				if (!aExecutar && !mensagensRecebidas.isEmpty() && frameServidor.robotIsOpen()) {
 					// Vai buscar a mensagem recebida há mais tempo
 					Mensagem proxMensagem = mensagensRecebidas.get(0);
-					frameServidor.write("Mandar Executar: " + proxMensagem.toString());
+					frameServidor.write("Pedir para Executar: " + proxMensagem.toString());
 					switch (proxMensagem.getTipo()) {
 					// E, consoante o seu tipo, executa-a chamando o método correspondente do Robot.
 						case Mensagem.typeReta:
 							MensagemReta msgReta = (MensagemReta) proxMensagem;
 							this.robot.Reta(msgReta.getDistancia());
+							if (gravador.getEstado() == GravarFormas.Estado.Gravar) {
+								gravador.receberMensagem(msgReta.getID() + "; " + "Reta: <" + msgReta.getDistancia() + ">");
+							}
 							aExecutar      = true;
 							// Calculamos, em milisegundos, o tempo que vai demorar a executar cada operação (Vrobot = 30cm/s)
 							tempoDeEspera  = (long) (Math.ceil(msgReta.getDistancia() / 30.0f) * 1000.0f);
@@ -88,6 +91,9 @@ public class ServidorRobot extends Thread{
 						case Mensagem.typeCurvaDireita:
 							MensagemCurvarDireita msgDireita = (MensagemCurvarDireita) proxMensagem;
 							this.robot.CurvarDireita(msgDireita.getAngulo(), msgDireita.getRaio());
+							if (gravador.getEstado() == GravarFormas.Estado.Gravar) {
+								gravador.receberMensagem(msgDireita.getID() + "; " + "CurvarDireita: <" + msgDireita.getAngulo() + ">, <" + msgDireita.getRaio() +">");
+							}
 							aExecutar      = true;
 							tempoDeEspera  = (long) ((((Math.toRadians(msgDireita.getAngulo()) * (msgDireita.getRaio() + 4.5f)) / 30.0f) * 1000.0f) + 620.0);
 							inicioDaEspera = clock.millis();
@@ -96,6 +102,9 @@ public class ServidorRobot extends Thread{
 						case Mensagem.typeCurvaEsquerda:
 							MensagemCurvarEsquerda msgEsquerda = (MensagemCurvarEsquerda) proxMensagem;
 							this.robot.CurvarEsquerda(msgEsquerda.getAngulo(), msgEsquerda.getRaio());
+							if (gravador.getEstado() == GravarFormas.Estado.Gravar) {
+								gravador.receberMensagem(msgEsquerda.getID() + "; " + "CurvarEsquerda: <" + msgEsquerda.getAngulo() + ">, <" + msgEsquerda.getRaio() +">");
+							}
 							aExecutar      = true;
 							tempoDeEspera  = (long) (((Math.toRadians(msgEsquerda.getAngulo()) * (msgEsquerda.getRaio() + 4.0f)) / 30.0f) * 1000.0f);
 							inicioDaEspera = clock.millis();
@@ -104,6 +113,9 @@ public class ServidorRobot extends Thread{
 						case Mensagem.typePara:
 							MensagemParar msgPara = (MensagemParar) proxMensagem;
 							this.robot.Parar(msgPara.getBoolean());
+							if (gravador.getEstado() == GravarFormas.Estado.Gravar) {
+								gravador.receberMensagem(msgPara.getID() + "; " + "Parar: <" + msgPara.getBoolean() + ">");
+							}
 							aExecutar      = true;
 							tempoDeEspera  = (long) 500.0f;
 							inicioDaEspera = clock.millis();
